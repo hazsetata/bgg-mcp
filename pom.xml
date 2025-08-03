@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>com.hazse.mcp</groupId>
-    <artifactId>bgg-stdio</artifactId>
+    <artifactId>boardgame-stdio</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
-    <name>bgg-mcp</name>
+    <name>boardgame-mcp</name>
     <description>Exposes some tools to search BoardGameGeek (BGG) for games.</description>
 
     <licenses>
@@ -42,6 +42,12 @@
             <groupId>org.audux.bgg</groupId>
             <artifactId>bggclient</artifactId>
             <version>${bgg-client.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-simple</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -1,9 +1,9 @@
-# MCP server for searching BGG (BoardGameGeek)
+# MCP server for searching for boardgames
 
 ## Introduction
 
-This is a small experiment to create an MCP server that can search 
-BGG (BoardGameGeek) for games. Written in Java, using Spring Boot and
+This is a small experiment to create an MCP server that can search for  
+boardgames from BGG (BoardGameGeek). Written in Java, using Spring Boot and
 [Spring AI](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html).
 
 ## Usage
@@ -16,12 +16,11 @@ and add the following:
 ```json
 {
   "mcpServers": {
-    "bgg-mcp": {
+    "boardgame-mcp": {
       "command": "java",
       "args": [
         "-jar",
-        "-Dlogging.file.name=/path/to/where/you/want/the/logs/bgg-mcp-stdio-server.log",
-        "/absolute/path/to/the/jar/bgg-stdio-0.1.0-SNAPSHOT.jar"
+        "/absolute/path/to/the/jar/boardgame-stdio-0.1.0-SNAPSHOT.jar"
       ]
     }
   }
