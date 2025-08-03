@@ -30,6 +30,17 @@ and add the following:
 
 Restart Claude Desktop and the tool should be available.
 
+### IntelliJ IDEA - AI Chat
+
+![](docs/intellij_screenshot.png "IntelliJ IDEA - AI Chat plugin")
+
+In IntelliJ IDEAS AI Chat you type `/` and select the `Add Command...`
+option. Then you can import the settings from Calude Desktop or follow
+the detailed instructions from the 
+[AI Assistant documentation page](https://www.jetbrains.com/help/ai-assistant/configure-an-mcp-server.html).
+If succesful, you should see the `getBoardGamesWithName` command in the
+list of commands.
+
 ## Acknowledgements
 
  * The code uses this [BGG Client](https://github.com/Bram--/bggclient).
