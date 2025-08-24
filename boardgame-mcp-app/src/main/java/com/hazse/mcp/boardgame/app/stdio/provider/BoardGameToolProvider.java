@@ -11,7 +11,8 @@ import org.springaicommunity.mcp.annotation.McpToolParam;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.hazse.mcp.boardgame.app.stdio.provider.BoardGameResourceProvider.BOARD_GAME_DETAILS_URI;
 
 @SuppressWarnings("unused")
 @RequiredArgsConstructor
@@ -23,13 +24,17 @@ public class BoardGameToolProvider {
             name = "searchGames",
             description = "Search for a list of boardgames by the provided full or partial name"
     )
-    public String getBoardGamesWithName(
+    public McpSchema.CallToolResult getBoardGamesWithName(
             @McpToolParam(description =  "The full or partial name of the games to look for", required = true)
             String name
     ) {
-        return bggClient.searchGamesByName(name).stream()
-                .map(this::convertToText)
-                .collect(Collectors.joining("\n"));
+        List<McpSchema.Content> links = bggClient.searchGamesByName(name).stream()
+                .map(this::convertToResourceLink)
+                .toList();
+
+        return McpSchema.CallToolResult.builder()
+                .content(links)
+                .build();
     }
 
     @McpTool(
@@ -53,15 +58,31 @@ public class BoardGameToolProvider {
     }
 
 
-    private String convertToText(BoardGameSearchResult bggGame) {
+    private String convertToText(BoardGameSearchResult game) {
         return String.format(""" 
                 Name: %s
                 ID: %d
                 Publication year: %s
                 Url: https://boardgamegeek.com/boardgame/%d
                 """,
+                game.getName(),
+                game.getId(),
+                game.getPublicationYear() == null ? "Unknown" : String.valueOf(game.getPublicationYear()),
+                game.getId()
+        );
+    }
+
+    private McpSchema.Content convertToResourceLink(BoardGameSearchResult game) {
+        return McpSchema.ResourceLink.builder()
+                .name(game.getName())
+                .description(convertToResourceText(game))
+                .uri(BOARD_GAME_DETAILS_URI + game.getId())
+                .build();
+    }
+
+    private String convertToResourceText(BoardGameSearchResult bggGame) {
+        return String.format("Name: %s , Publication year: %s , Url: https://boardgamegeek.com/boardgame/%d",
                 bggGame.getName(),
-                bggGame.getId(),
                 bggGame.getPublicationYear() == null ? "Unknown" : String.valueOf(bggGame.getPublicationYear()),
                 bggGame.getId()
         );
