@@ -9,7 +9,6 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class BoardGameSearchResult {
     private int id;
-    private String providerId;
     private String name;
     private Integer publicationYear;
 }

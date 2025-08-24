@@ -11,8 +11,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class AuduxBggClient implements BoardGameInformationClient {
-    private static final String PROVIDER_ID = "bgg";
-
     @Override
     public List<BoardGameSearchResult> searchGamesByName(String name) {
         try {
@@ -64,7 +62,6 @@ public class AuduxBggClient implements BoardGameInformationClient {
 
     private BoardGameSearchResult convertToBggGameSearchResult(SearchResult result) {
         return BoardGameSearchResult.builder()
-                .providerId(PROVIDER_ID)
                 .id(result.getId())
                 .name(result.getName().getValue())
                 .publicationYear(result.getYearPublished())
@@ -73,7 +70,6 @@ public class AuduxBggClient implements BoardGameInformationClient {
 
     private BoardGame convertToBggGame(Thing thing) {
         BoardGame.BoardGameBuilder retValue = BoardGame.builder()
-                .providerId(PROVIDER_ID)
                 .id(thing.getId())
                 .name(thing.getName());
 

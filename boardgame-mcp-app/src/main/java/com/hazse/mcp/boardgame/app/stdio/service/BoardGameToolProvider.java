@@ -3,19 +3,22 @@ package com.hazse.mcp.boardgame.app.stdio.service;
 import com.hazse.mcp.boardgame.client.core.BoardGameInformationClient;
 import com.hazse.mcp.boardgame.client.core.BoardGameSearchResult;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.ai.tool.annotation.ToolParam;
+import org.springaicommunity.mcp.annotation.McpTool;
+import org.springaicommunity.mcp.annotation.McpToolParam;
 
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @RequiredArgsConstructor
-public class BoardGameToolService {
+public class BoardGameToolProvider {
     private final BoardGameInformationClient bggClient;
 
-    @Tool(description = "Get list of boardgames by the provided full or partial name")
+    @McpTool(
+            name = "searchGames",
+            description = "Search for a list of boardgames by the provided full or partial name"
+    )
     public String getBoardgamesWithName(
-            @ToolParam( description =  "The full or partial name of games")
+            @McpToolParam(description =  "The full or partial name of the games to look for", required = true)
             String name
     ) {
         return bggClient.searchGamesByName(name).stream()

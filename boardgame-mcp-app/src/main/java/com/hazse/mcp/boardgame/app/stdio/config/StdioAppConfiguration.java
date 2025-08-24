@@ -1,12 +1,14 @@
 package com.hazse.mcp.boardgame.app.stdio.config;
 
-import com.hazse.mcp.boardgame.app.stdio.service.BoardGameToolService;
+import com.hazse.mcp.boardgame.app.stdio.service.BoardGameToolProvider;
 import com.hazse.mcp.boardgame.client.bgg.AuduxBggClient;
 import com.hazse.mcp.boardgame.client.core.BoardGameInformationClient;
-import org.springframework.ai.tool.ToolCallbackProvider;
-import org.springframework.ai.tool.method.MethodToolCallbackProvider;
+import io.modelcontextprotocol.server.McpServerFeatures;
+import org.springaicommunity.mcp.spring.SyncMcpAnnotationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class StdioAppConfiguration {
@@ -16,12 +18,12 @@ public class StdioAppConfiguration {
     }
 
     @Bean
-    BoardGameToolService bggToolService(BoardGameInformationClient bggClient) {
-        return new BoardGameToolService(bggClient);
+    BoardGameToolProvider bggToolProvider(BoardGameInformationClient bggClient) {
+        return new BoardGameToolProvider(bggClient);
     }
 
     @Bean
-    public ToolCallbackProvider weatherTools(BoardGameToolService boardGameToolService) {
-        return MethodToolCallbackProvider.builder().toolObjects(boardGameToolService).build();
+    public List<McpServerFeatures.SyncToolSpecification> syncToolSpecifications(BoardGameToolProvider bggToolProvider) {
+        return SyncMcpAnnotationProvider.createSyncToolSpecifications(List.of(bggToolProvider));
     }
 }
