@@ -9,7 +9,10 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class BoardGame {
     private int id;
+    private BoardGameType type;
     private String name;
+    private String url;
+    private String description;
     private Integer publicationYear;
     private String thumbnailUrl;
     private String imageUrl;
