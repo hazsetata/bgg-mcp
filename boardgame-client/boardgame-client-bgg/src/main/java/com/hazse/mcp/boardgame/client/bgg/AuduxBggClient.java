@@ -3,6 +3,7 @@ package com.hazse.mcp.boardgame.client.bgg;
 import com.hazse.mcp.boardgame.client.core.BoardGame;
 import com.hazse.mcp.boardgame.client.core.BoardGameInformationClient;
 import com.hazse.mcp.boardgame.client.core.BoardGameSearchResult;
+import com.hazse.mcp.boardgame.client.core.BoardGameType;
 import org.audux.bgg.common.ThingType;
 import org.audux.bgg.response.*;
 
@@ -11,6 +12,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class AuduxBggClient implements BoardGameInformationClient {
+    protected static final Set<ThingType> ALLOWED_THING_TYPES_SET = Set.of(
+            ThingType.BOARD_GAME,
+            ThingType.BOARD_GAME_EXPANSION
+    );
+    protected static final ThingType[] ALLOWED_THING_TYPES = ALLOWED_THING_TYPES_SET.toArray(new ThingType[0]);
+    public static final String BGG_GAME_URL = "https://boardgamegeek.com/boardgame/%d";
+
     @Override
     public List<BoardGameSearchResult> searchGamesByName(String name) {
         try {
@@ -23,6 +31,7 @@ public class AuduxBggClient implements BoardGameInformationClient {
 
                 return searchResults.getResults()
                         .stream()
+                        .filter(result -> ALLOWED_THING_TYPES_SET.contains(result.getType()))
                         .map(this::convertToBggGameSearchResult)
                         .toList();
             }
@@ -40,7 +49,7 @@ public class AuduxBggClient implements BoardGameInformationClient {
             Response<Things> fetchResponse = org.audux.bgg.BggClient
                     .things(
                             ids.toArray(new Integer[0]),
-                            new ThingType[]{ThingType.BOARD_GAME}
+                            ALLOWED_THING_TYPES
                     )
                     .callAsync()
                     .get();
@@ -64,6 +73,7 @@ public class AuduxBggClient implements BoardGameInformationClient {
         return BoardGameSearchResult.builder()
                 .id(result.getId())
                 .name(result.getName().getValue())
+                .url(BGG_GAME_URL.formatted(result.getId()))
                 .publicationYear(result.getYearPublished())
                 .build();
     }
@@ -71,8 +81,13 @@ public class AuduxBggClient implements BoardGameInformationClient {
     private BoardGame convertToBggGame(Thing thing) {
         BoardGame.BoardGameBuilder retValue = BoardGame.builder()
                 .id(thing.getId())
-                .name(thing.getName());
+                .type(convertToBoardGameType(thing.getType()))
+                .name(thing.getName())
+                .url(BGG_GAME_URL.formatted(thing.getId()));
 
+        if (thing.getDescription() != null) {
+            retValue.description(thing.getDescription());
+        }
         if (thing.getYearPublished() != null) {
             retValue.publicationYear(thing.getYearPublished());
         }
@@ -93,5 +108,18 @@ public class AuduxBggClient implements BoardGameInformationClient {
         }
 
         return retValue.build();
+    }
+
+    private BoardGameType convertToBoardGameType(ThingType thingType) {
+        if (thingType != null) {
+            return switch (thingType) {
+                case BOARD_GAME -> BoardGameType.BOARD_GAME;
+                case BOARD_GAME_EXPANSION -> BoardGameType.EXPANSION;
+                default -> BoardGameType.UNKNOWN;
+            };
+        }
+        else {
+            return BoardGameType.UNKNOWN;
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.hazse.mcp.boardgame.app.stdio.config;
 
-import com.hazse.mcp.boardgame.app.stdio.service.BoardGameToolProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazse.mcp.boardgame.app.stdio.provider.BoardGameResourceProvider;
+import com.hazse.mcp.boardgame.app.stdio.provider.BoardGameToolProvider;
 import com.hazse.mcp.boardgame.client.bgg.AuduxBggClient;
 import com.hazse.mcp.boardgame.client.core.BoardGameInformationClient;
 import io.modelcontextprotocol.server.McpServerFeatures;
@@ -18,12 +20,26 @@ public class StdioAppConfiguration {
     }
 
     @Bean
-    BoardGameToolProvider bggToolProvider(BoardGameInformationClient bggClient) {
+    BoardGameToolProvider boardGameToolProvider(BoardGameInformationClient bggClient) {
         return new BoardGameToolProvider(bggClient);
     }
 
     @Bean
-    public List<McpServerFeatures.SyncToolSpecification> syncToolSpecifications(BoardGameToolProvider bggToolProvider) {
-        return SyncMcpAnnotationProvider.createSyncToolSpecifications(List.of(bggToolProvider));
+    BoardGameResourceProvider boardGameResourceProvider(BoardGameInformationClient bggClient, ObjectMapper objectMapper) {
+        return new BoardGameResourceProvider(bggClient, objectMapper);
+    }
+
+    @Bean
+    public List<McpServerFeatures.SyncToolSpecification> boardGameToolSpecifications(
+            BoardGameToolProvider boardGameToolProvider
+    ) {
+        return SyncMcpAnnotationProvider.createSyncToolSpecifications(List.of(boardGameToolProvider));
+    }
+
+    @Bean
+    public List<McpServerFeatures.SyncResourceSpecification> boardGameResourceSpecifications(
+            BoardGameResourceProvider boardGameResourceProvider
+    ) {
+        return SyncMcpAnnotationProvider.createSyncResourceSpecifications(List.of(boardGameResourceProvider));
     }
 }
